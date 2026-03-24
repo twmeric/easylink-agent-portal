@@ -1,0 +1,19 @@
+name = "easylink-api"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+account_id = "dfbee5c2a5706a81bc04675499c933d4"
+
+# D1 Database - 主库
+[[d1_databases]]
+binding = "DB"
+database_name = "payment-db"
+database_id = "350594c4-4149-4519-b941-f9c0faf4121c"
+
+# Environment Variables
+[vars]
+ENVIRONMENT = "production"
+EASYLINK_BASE_URL = "https://api-pay.gnete.com.hk"
+
+# Cron: Boss日报 - 每天HK时间 12:30 (UTC 04:30)
+[triggers]
+crons = ["30 4 * * *"]
