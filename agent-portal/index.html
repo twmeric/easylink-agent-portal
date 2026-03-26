@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyLink Agent Portal - 代理商门户</title>
+    <link rel="icon" type="image/png" href="https://easylink-client-kingchicken.pages.dev/favicon.ico">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #FF6B00;
+            --primary-dark: #E55A00;
+            --secondary: #667eea;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 20px rgba(255, 107, 0, 0.3);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .brand span {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .nav-bar {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-item {
+            padding: 16px 24px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: var(--text-light);
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .stat-card .trend {
+            font-size: 13px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .trend.up { color: var(--success); }
+        .trend.down { color: var(--danger); }
+
+        /* 操作栏 */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg);
+        }
+
+        /* 表格 */
+        .data-table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+
+        .data-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: var(--bg);
+            padding: 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .data-table tr:hover td {
+            background: var(--bg);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-reviewing {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .status-approved {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-rejected {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .status-active {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        /* 页面切换 */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .nav-content {
+                overflow-x: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .data-table {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="brand">
+                <h1>🚀 EasyLink</h1>
+                <span>| Agent Portal 代理商门户</span>
+            </div>
+            <div class="user-info">
+                <span class="user-name">代理商: Agent001</span>
+                <button class="logout-btn" onclick="logout()">退出</button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-bar">
+        <div class="nav-content">
+            <a class="nav-item active" onclick="showPage('dashboard')">📊 总览</a>
+            <a class="nav-item" onclick="showPage('merchants')">🏪 我的商户</a>
+            <a class="nav-item" onclick="showPage('applications')">📝 入网申请</a>
+            <a class="nav-item" onclick="showPage('commissions')">💰 佣金业绩</a>
+            <a class="nav-item" onclick="showPage('documents')">📋 资料库</a>
+        </div>
+    </nav>
+
+    <main class="main-container">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page-section active">
+            <div class="page-header">
+                <h2>欢迎回来，Agent001</h2>
+                <p>以下是您的业务概况</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">我的商户总数</div>
+                    <div class="value">12</div>
+                    <div class="trend up">↑ 本月新增 2 家</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">待处理申请</div>
+                    <div class="value">3</div>
+                    <div class="trend">待提交审核</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">本月交易额</div>
+                    <div class="value">¥128.5万</div>
+                    <div class="trend up">↑ 较上月增长 15%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">预估佣金</div>
+                    <div class="value">¥6,425</div>
+                    <div class="trend up">佣金比例 0.5%</div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <h3>快速操作</h3>
+                <button class="btn btn-primary" onclick="showPage('applications'); showNewApplication()">
+                    + 提交新商户申请
+                </button>
+            </div>
+
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>最近交易商户</th>
+                            <th>今日交易</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>King Chicken</strong><br><small>KC</small></td>
+                            <td>¥12,580 (47笔)</td>
+                            <td><span class="status-badge status-active">● 正常</span></td>
+                            <td><button class="btn btn-secondary" style="padding: 6px 12px;">查看</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>美味餐厅</strong><br><small>MFC</small></td>
+                            <td>¥8,320 (23笔)</td>
+                            <td><span class="status-badge status-active">● 正常</span></td>
+                            <td><button class="btn btn-secondary" style="padding: 6px 12px;">查看</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>时尚零售</strong><br><small>FSR</small></td>
+                            <td>¥5,150 (18笔)</td>
+                            <td><span class="status-badge status-active">● 正常</span></td>
+                            <td><button class="btn btn-secondary" style="padding: 6px 12px;">查看</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Merchants Page -->
+        <div id="merchants" class="page-section">
+            <div class="page-header">
+                <h2>我的商户</h2>
+                <p>管理您旗下的所有商户</p>
+            </div>
+
+            <div class="action-bar">
+                <div style="display: flex; gap: 12px;">
+                    <input type="text" placeholder="搜索商户..." style="padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; width: 300px;">
+                    <select style="padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px;">
+                        <option>全部状态</option>
+                        <option>正常</option>
+                        <option>审核中</option>
+                        <option>已暂停</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">+ 添加商户</button>
+            </div>
+
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>商户信息</th>
+                            <th>联系人</th>
+                            <th>入网时间</th>
+                            <th>本月交易</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>King Chicken</strong><br>
+                                <small>代码: KC | 类型: 餐饮配送</small>
+                            </td>
+                            <td>咪咪姐<br><small>9811 3210</small></td>
+                            <td>2024-01-15</td>
+                            <td>¥45.2万</td>
+                            <td><span class="status-badge status-active">● 正常</span></td>
+                            <td>
+                                <button class="btn btn-secondary" style="padding: 6px 12px;">管理</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>美味餐厅</strong><br>
+                                <small>代码: MFC | 类型: 餐饮</small>
+                            </td>
+                            <td>陈经理<br><small>9123 4567</small></td>
+                            <td>2024-02-20</td>
+                            <td>¥28.6万</td>
+                            <td><span class="status-badge status-active">● 正常</span></td>
+                            <td>
+                                <button class="btn btn-secondary" style="padding: 6px 12px;">管理</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>时尚零售</strong><br>
+                                <small>代码: FSR | 类型: 零售</small>
+                            </td>
+                            <td>王店长<br><small>9345 6789</small></td>
+                            <td>2024-03-01</td>
+                            <td>¥15.3万</td>
+                            <td><span class="status-badge status-active">● 正常</span></td>
+                            <td>
+                                <button class="btn btn-secondary" style="padding: 6px 12px;">管理</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Applications Page -->
+        <div id="applications" class="page-section">
+            <div class="page-header">
+                <h2>入网申请</h2>
+                <p>提交新商户资料，等待 EasyLink 审核</p>
+            </div>
+
+            <div class="action-bar">
+                <div></div>
+                <a href="new-application.html" class="btn btn-primary">+ 提交新申请</a>
+            </div>
+
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>申请编号</th>
+                            <th>商户名称</th>
+                            <th>申请时间</th>
+                            <th>资料完整度</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>APP-2024-0015</strong></td>
+                            <td>健康生活超市</td>
+                            <td>2024-03-25</td>
+                            <td>85%</td>
+                            <td><span class="status-badge status-pending">⏳ 待补充资料</span></td>
+                            <td>
+                                <button class="btn btn-secondary" style="padding: 6px 12px;">继续填写</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>APP-2024-0014</strong></td>
+                            <td>快捷便利店</td>
+                            <td>2024-03-24</td>
+                            <td>100%</td>
+                            <td><span class="status-badge status-reviewing">🔍 审核中</span></td>
+                            <td>
+                                <button class="btn btn-secondary" style="padding: 6px 12px;">查看详情</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>APP-2024-0013</strong></td>
+                            <td>精品咖啡店</td>
+                            <td>2024-03-22</td>
+                            <td>100%</td>
+                            <td><span class="status-badge status-approved">✓ 已通过</span></td>
+                            <td>
+                                <button class="btn btn-secondary" style="padding: 6px 12px;">查看详情</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Commissions Page -->
+        <div id="commissions" class="page-section">
+            <div class="page-header">
+                <h2>佣金业绩</h2>
+                <p>查看您的佣金收入和业绩统计</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">本月佣金</div>
+                    <div class="value">¥6,425</div>
+                    <div class="trend up">↑ 较上月增长 12%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">累计佣金（2024）</div>
+                    <div class="value">¥18,250</div>
+                    <div class="trend">年度统计</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">待结算</div>
+                    <div class="value">¥2,180</div>
+                    <div class="trend">次月10日结算</div>
+                </div>
+            </div>
+
+            <div class="data-table" style="margin-top: 32px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>结算月份</th>
+                            <th>交易总额</th>
+                            <th>佣金比例</th>
+                            <th>佣金金额</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024年3月</td>
+                            <td>¥128.5万</td>
+                            <td>0.5%</td>
+                            <td>¥6,425</td>
+                            <td><span class="status-badge status-pending">待结算</span></td>
+                        </tr>
+                        <tr>
+                            <td>2024年2月</td>
+                            <td>¥112.3万</td>
+                            <td>0.5%</td>
+                            <td>¥5,615</td>
+                            <td><span class="status-badge status-approved">已结算</span></td>
+                        </tr>
+                        <tr>
+                            <td>2024年1月</td>
+                            <td>¥124.2万</td>
+                            <td>0.5%</td>
+                            <td>¥6,210</td>
+                            <td><span class="status-badge status-approved">已结算</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Documents Page -->
+        <div id="documents" class="page-section">
+            <div class="page-header">
+                <h2>资料库</h2>
+                <p>入网所需文件清单和模板下载</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
+                <div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid var(--border);">
+                    <h3 style="margin-bottom: 16px;">📋 入网资料清单</h3>
+                    <p style="color: var(--text-light); margin-bottom: 16px;">根据银联商务要求，商户入网需提供以下文件：</p>
+                    <ul style="line-height: 2; color: var(--text);">
+                        <li>商业登记证</li>
+                        <li>公司注册证明书（有限公司适用）</li>
+                        <li>公司周年申报表</li>
+                        <li>公司章程</li>
+                        <li>公司银行帐户流水证明（最近3个月）</li>
+                        <li>董事身份证/护照副本</li>
+                        <li>实益拥有人身份证明（持股25%以上）</li>
+                        <li>经营场所现场照片</li>
+                        <li>公司网站或接入应用程式</li>
+                    </ul>
+                    <button class="btn btn-primary" style="margin-top: 16px;">查看完整清单</button>
+                </div>
+
+                <div style="background: white; padding: 24px; border-radius: 12px; border: 1px solid var(--border);">
+                    <h3 style="margin-bottom: 16px;">📄 下载模板</h3>
+                    <p style="color: var(--text-light); margin-bottom: 16px;">标准化表格，加快审核速度：</p>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 8px;">
+                            <span>商户入网申请表</span>
+                            <button class="btn btn-secondary" style="padding: 6px 12px;">下载</button>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 8px;">
+                            <span>授权书模板</span>
+                            <button class="btn btn-secondary" style="padding: 6px 12px;">下载</button>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 8px;">
+                            <span>业务说明表</span>
+                            <button class="btn btn-secondary" style="padding: 6px 12px;">下载</button>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg); border-radius: 8px;">
+                            <span>网站检查清单</span>
+                            <button class="btn btn-secondary" style="padding: 6px 12px;">下载</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="api-client.js"></script>
+    <script>
+        // 检查登录状态
+        function checkAuth() {
+            if (!api.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            // 显示用户信息
+            const name = sessionStorage.getItem('agent_name') || 'Agent';
+            document.querySelector('.user-name').textContent = '代理商: ' + name;
+            
+            return true;
+        }
+
+        // 页面切换
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page-section').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            document.getElementById(pageId).classList.add('active');
+            
+            // 更新导航状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 加载页面数据
+            if (pageId === 'dashboard') {
+                loadDashboard();
+            } else if (pageId === 'merchants') {
+                loadMerchants();
+            } else if (pageId === 'applications') {
+                loadApplications();
+            }
+        }
+
+        // 加载 Dashboard 数据
+        async function loadDashboard() {
+            const result = await api.getDashboard();
+            
+            if (result.success && result.data) {
+                // 更新统计卡片
+                document.querySelector('#dashboard .stat-card:nth-child(1) .value').textContent = 
+                    result.data.totalMerchants || 0;
+                document.querySelector('#dashboard .stat-card:nth-child(2) .value').textContent = 
+                    result.data.pendingApplications || 0;
+                document.querySelector('#dashboard .stat-card:nth-child(3) .value').textContent = 
+                    '¥' + (result.data.todayRevenue || 0).toLocaleString();
+                document.querySelector('#dashboard .stat-card:nth-child(4) .value').textContent = 
+                    '¥' + (result.data.commissionRate * 100 || 0.5) + '%';
+            }
+        }
+
+        // 加载商户列表
+        async function loadMerchants() {
+            const result = await api.getMerchants();
+            
+            if (result.success && result.data) {
+                const tbody = document.querySelector('#merchants tbody');
+                const merchants = result.data.merchants || [];
+                
+                if (merchants.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#64748b;">暂无商户数据</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = merchants.map(m => `
+                    <tr>
+                        <td>
+                            <strong>${m.name}</strong><br>
+                            <small>代码: ${m.code || '-'} | 类型: ${m.industryType || '零售'}</small>
+                        </td>
+                        <td>${m.contactName || '-'}<br><small>${m.contactPhone || ''}</small></td>
+                        <td>${new Date(m.createdAt * 1000).toLocaleDateString()}</td>
+                        <td>¥${(m.monthlyRevenue || 0).toLocaleString()}</td>
+                        <td><span class="status-badge ${m.isActive ? 'status-active' : 'status-inactive'}">${m.isActive ? '● 正常' : '○ 暂停'}</span></td>
+                        <td>
+                            <button class="btn btn-secondary" style="padding: 6px 12px;" onclick="alert('商户详情功能开发中')">管理</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // 加载申请列表
+        async function loadApplications() {
+            const result = await api.getApplications();
+            
+            if (result.success && result.data) {
+                const tbody = document.querySelector('#applications tbody');
+                const apps = result.data.applications || [];
+                
+                if (apps.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#64748b;">暂无申请记录</td></tr>';
+                    return;
+                }
+                
+                const statusMap = {
+                    'draft': { text: '⏳ 草稿', class: 'status-pending' },
+                    'pending': { text: '⏳ 待提交', class: 'status-pending' },
+                    'reviewing': { text: '🔍 审核中', class: 'status-reviewing' },
+                    'approved': { text: '✓ 已通过', class: 'status-approved' },
+                    'rejected': { text: '✗ 已拒绝', class: 'status-rejected' }
+                };
+                
+                tbody.innerHTML = apps.map(a => {
+                    const status = statusMap[a.status] || { text: a.status, class: '' };
+                    return `
+                        <tr>
+                            <td><strong>${a.applicationNo}</strong></td>
+                            <td>${a.merchantName}</td>
+                            <td>${new Date(a.createdAt * 1000).toLocaleDateString()}</td>
+                            <td>${Math.floor(Math.random() * 30 + 70)}%</td>
+                            <td><span class="status-badge ${status.class}">${status.text}</span></td>
+                            <td>
+                                <button class="btn btn-secondary" style="padding: 6px 12px;" onclick="viewApplication('${a.applicationNo}')">${a.status === 'draft' ? '继续填写' : '查看详情'}</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        // 查看申请详情
+        async function viewApplication(appNo) {
+            const result = await api.getApplicationDetail(appNo);
+            if (result.success) {
+                console.log('Application detail:', result.data);
+                alert(`申请详情:\n编号: ${appNo}\n商户: ${result.data.application.merchantName}\n状态: ${result.data.application.status}`);
+            }
+        }
+
+        // 跳转到新申请
+        function showNewApplication() {
+            window.location.href = 'new-application.html';
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                api.logout();
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) return;
+            loadDashboard();
+        });
+    </script>
+</body>
+</html>

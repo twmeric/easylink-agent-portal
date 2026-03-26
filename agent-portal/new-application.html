@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提交新商户申请 - EasyLink Agent Portal</title>
+    <link rel="icon" type="image/png" href="https://easylink-client-kingchicken.pages.dev/favicon.ico">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #FF6B00;
+            --primary-dark: #E55A00;
+            --secondary: #667eea;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 20px rgba(255, 107, 0, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .progress-header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 24px 0;
+        }
+
+        .progress-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .progress-step.active .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .progress-step.completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .progress-step.active .step-label {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-subtitle {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: var(--danger);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(255, 107, 0, 0.02);
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .file-upload-text {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .file-upload-hint {
+            color: var(--text-light);
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .uploaded-files {
+            margin-top: 16px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-icon {
+            font-size: 24px;
+        }
+
+        .file-name {
+            font-weight: 500;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .file-remove {
+            color: var(--danger);
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+            margin-top: 2px;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .info-box {
+            background: #EFF6FF;
+            border-left: 4px solid var(--secondary);
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 24px;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: #1E40AF;
+            margin-bottom: 8px;
+        }
+
+        .info-box-content {
+            font-size: 14px;
+            color: #1E40AF;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #FEF3C7;
+            border-left: 4px solid var(--warning);
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 24px;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 24px 0;
+            border-top: 1px solid var(--border);
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg);
+        }
+
+        .section-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 32px 0;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-bar {
+                overflow-x: auto;
+                padding-bottom: 16px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .action-bar .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="brand">
+                <h1>🚀 EasyLink Agent Portal</h1>
+            </div>
+            <a href="index.html" style="color: white; text-decoration: none;">← 返回首页</a>
+        </div>
+    </header>
+
+    <div class="progress-header">
+        <div class="progress-content">
+            <div class="progress-bar">
+                <div class="progress-step active">
+                    <div class="step-number">1</div>
+                    <div class="step-label">基本信息</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">2</div>
+                    <div class="step-label">公司文件</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">3</div>
+                    <div class="step-label">经营信息</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">4</div>
+                    <div class="step-label">结算信息</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">5</div>
+                    <div class="step-label">提交审核</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-container">
+        <form id="applicationForm">
+            <!-- Section 1: 基本信息 -->
+            <div class="form-section">
+                <h2 class="section-title">📋 基本信息</h2>
+                <p class="section-subtitle">填写商户的基本注册信息</p>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">商户全称 <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="请输入公司全称" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">商户简称</label>
+                        <input type="text" class="form-input" placeholder="用于显示的品牌名称">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">商户类型 <span class="required">*</span></label>
+                        <select class="form-select" required>
+                            <option value="">请选择商户类型</option>
+                            <option value="limited">有限公司</option>
+                            <option value="unlimited">无限公司</option>
+                            <option value="sole">独资企业</option>
+                            <option value="partnership">合伙企业</option>
+                            <option value="individual">个体工商户</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">行业类型 <span class="required">*</span></label>
+                        <select class="form-select" required>
+                            <option value="">请选择行业</option>
+                            <option value="catering">餐饮美食</option>
+                            <option value="retail">零售百货</option>
+                            <option value="supermarket">超市便利店</option>
+                            <option value="hotel">酒店住宿</option>
+                            <option value="entertainment">休闲娱乐</option>
+                            <option value="education">教育培训</option>
+                            <option value="medical">医疗健康</option>
+                            <option value="ecommerce">电子商务</option>
+                            <option value="logistics">物流配送</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">商业登记证号码 <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="例如: 12345678" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">公司注册号码（有限公司）</label>
+                        <input type="text" class="form-input" placeholder="例如: 1234567">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">注册地址 <span class="required">*</span></label>
+                        <textarea class="form-textarea" placeholder="请输入公司注册地址" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">经营地址 <span class="required">*</span></label>
+                        <textarea class="form-textarea" placeholder="如与注册地址不同，请输入实际经营地址" required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: 联系人信息 -->
+            <div class="form-section">
+                <h2 class="section-title">👤 联系人信息</h2>
+                <p class="section-subtitle">法定代表人/董事及日常联系人</p>
+
+                <div class="info-box">
+                    <div class="info-box-title">💡 提示</div>
+                    <div class="info-box-content">
+                        董事/股东（持股等于或大于25%）有变更情况，请提供新的相关人士身份证明文件副本。
+                        如股东为离岸公司则需提供一年内发出的董事在职证明。
+                    </div>
+                </div>
+
+                <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--text);">法定代表人/董事</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">姓名 <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="请输入姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">职位 <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="例如: 董事/总经理" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">身份证/护照号码 <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="请输入证件号码" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">联系电话 <span class="required">*</span></label>
+                        <input type="tel" class="form-input" placeholder="例如: 852 9123 4567" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">电子邮箱 <span class="required">*</span></label>
+                        <input type="email" class="form-input" placeholder="例如: contact@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">持股比例（%）</label>
+                        <input type="number" class="form-input" placeholder="例如: 100" min="0" max="100">
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--text);">日常联系人</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">姓名 <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="请输入姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">职位 <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="例如: 财务经理" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">联系电话 <span class="required">*</span></label>
+                        <input type="tel" class="form-input" placeholder="例如: 852 9123 4567" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">电子邮箱 <span class="required">*</span></label>
+                        <input type="email" class="form-input" placeholder="例如: contact@company.com" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: 公司文件上传 -->
+            <div class="form-section">
+                <h2 class="section-title">📄 公司文件</h2>
+                <p class="section-subtitle">上传入网所需的证明文件（根据银联商务要求）</p>
+
+                <div class="warning-box">
+                    <div class="info-box-title">⚠️ 重要提示</div>
+                    <div class="info-box-content">
+                        所有文件必须为彩色扫描件或照片，清晰可见，文件格式支持 PDF、JPG、PNG，单个文件不超过 10MB。
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label">1. 商业登记证 <span class="required">*</span></label>
+                    <div class="file-upload" onclick="document.getElementById('file1').click()">
+                        <div class="file-upload-icon">📄</div>
+                        <div class="file-upload-text">点击或拖拽上传商业登记证</div>
+                        <div class="file-upload-hint">支持 PDF、JPG、PNG，不超过 10MB</div>
+                    </div>
+                    <input type="file" id="file1" style="display: none;" accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label">2. 公司注册证明书（有限公司适用）</label>
+                    <div class="file-upload" onclick="document.getElementById('file2').click()">
+                        <div class="file-upload-icon">📄</div>
+                        <div class="file-upload-text">点击或拖拽上传公司注册证明书</div>
+                        <div class="file-upload-hint">有限公司必须提供</div>
+                    </div>
+                    <input type="file" id="file2" style="display: none;" accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label">3. 公司周年申报表（有限公司适用，最近一期）</label>
+                    <div class="file-upload" onclick="document.getElementById('file3').click()">
+                        <div class="file-upload-icon">📄</div>
+                        <div class="file-upload-text">点击或拖拽上传周年申报表</div>
+                        <div class="file-upload-hint">显示最新董事及股东信息</div>
+                    </div>
+                    <input type="file" id="file3" style="display: none;" accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label">4. 公司章程</label>
+                    <div class="file-upload" onclick="document.getElementById('file4').click()">
+                        <div class="file-upload-icon">📄</div>
+                        <div class="file-upload-text">点击或拖拽上传公司章程</div>
+                        <div class="file-upload-hint">Articles of Association</div>
+                    </div>
+                    <input type="file" id="file4" style="display: none;" accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label">5. 董事身份证/护照副本 <span class="required">*</span></label>
+                    <div class="file-upload" onclick="document.getElementById('file5').click()">
+                        <div class="file-upload-icon">🆔</div>
+                        <div class="file-upload-text">点击或拖拽上传身份证/护照</div>
+                        <div class="file-upload-hint">正反面都需要，清晰可见</div>
+                    </div>
+                    <input type="file" id="file5" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label">6. 实益拥有人身份证明（持股25%以上）</label>
+                    <div class="file-upload" onclick="document.getElementById('file6').click()">
+                        <div class="file-upload-icon">🆔</div>
+                        <div class="file-upload-text">点击或拖拽上传身份证明</div>
+                        <div class="file-upload-hint">如有持股25%以上的股东，需提供其身份证明</div>
+                    </div>
+                    <input type="file" id="file6" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label">7. 公司银行帐户流水证明（最近3个月）</label>
+                    <div class="file-upload" onclick="document.getElementById('file7').click()">
+                        <div class="file-upload-icon">🏦</div>
+                        <div class="file-upload-text">点击或拖拽上传银行流水</div>
+                        <div class="file-upload-hint">显示公司名和账户信息</div>
+                    </div>
+                    <input type="file" id="file7" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">8. 经营场所现场照片 <span class="required">*</span></label>
+                    <div class="file-upload" onclick="document.getElementById('file8').click()">
+                        <div class="file-upload-icon">📸</div>
+                        <div class="file-upload-text">点击或拖拽上传现场照片</div>
+                        <div class="file-upload-hint">需清楚展示门牌、招牌、经营现场环境等</div>
+                    </div>
+                    <input type="file" id="file8" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                </div>
+            </div>
+
+            <!-- Section 4: 经营信息 -->
+            <div class="form-section">
+                <h2 class="section-title">🏪 经营信息</h2>
+                <p class="section-subtitle">网站/应用信息及业务模式说明</p>
+
+                <div class="info-box">
+                    <div class="info-box-title">🌐 网站要求</div>
+                    <div class="info-box-content">
+                        请确保报备的收款网站内具备以下元素：<br>
+                        • 主页、产品列表及描述<br>
+                        • 条款及细则、送货政策（如有）<br>
+                        • 退款/退货/订单取消政策<br>
+                        • 联络资料或客服联络方式<br>
+                        • 下单、结帐及付款页面<br>
+                        • 网站内需注明主体申请公司营运权拥有权
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">公司网站 URL</label>
+                        <input type="url" class="form-input" placeholder="例如: https://www.company.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">应用程式/APP 名称</label>
+                        <input type="text" class="form-input" placeholder="如有移动端应用，请输入名称">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label">业务模式说明 <span class="required">*</span></label>
+                    <textarea class="form-textarea" placeholder="请描述您的业务模式：销售什么产品/服务、目标客户群体、平均交易金额、预计月交易额等" required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">预计月交易额（港币） <span class="required">*</span></label>
+                        <select class="form-select" required>
+                            <option value="">请选择</option>
+                            <option value="0-10k">10,000 以下</option>
+                            <option value="10k-50k">10,000 - 50,000</option>
+                            <option value="50k-100k">50,000 - 100,000</option>
+                            <option value="100k-500k">100,000 - 500,000</option>
+                            <option value="500k-1m">500,000 - 1,000,000</option>
+                            <option value="1m+">1,000,000 以上</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">平均单笔交易金额（港币） <span class="required">*</span></label>
+                        <input type="number" class="form-input" placeholder="例如: 500" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">过往交易证明材料</label>
+                    <div class="file-upload" onclick="document.getElementById('file9').click()">
+                        <div class="file-upload-icon">📊</div>
+                        <div class="file-upload-text">点击或拖拽上传证明材料</div>
+                        <div class="file-upload-hint">如有其他支付平台的交易记录，可提供作为参考</div>
+                    </div>
+                    <input type="file" id="file9" style="display: none;" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                </div>
+            </div>
+
+            <!-- Section 5: 结算信息 -->
+            <div class="form-section">
+                <h2 class="section-title">💰 结算信息</h2>
+                <p class="section-subtitle">资金结算银行账户信息</p>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">结算账户名称 <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="必须与商业登记证上的公司名称一致" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">银行名称 <span class="required">*</span></label>
+                        <select class="form-select" required>
+                            <option value="">请选择银行</option>
+                            <option value="hsbc">香港上海汇丰银行 (HSBC)</option>
+                            <option value="hangseng">恒生银行 (Hang Seng)</option>
+                            <option value="boc">中国银行 (Bank of China)</option>
+                            <option value="icbc">中国工商银行 (ICBC)</option>
+                            <option value="ccb">中国建设银行 (CCB)</option>
+                            <option value="standard">渣打银行 (Standard Chartered)</option>
+                            <option value="dbs">星展银行 (DBS)</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">银行账号 <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="请输入银行账号" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">分行代码</label>
+                        <input type="text" class="form-input" placeholder="例如: 012">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">银行证明文件</label>
+                    <div class="file-upload" onclick="document.getElementById('file10').click()">
+                        <div class="file-upload-icon">🏦</div>
+                        <div class="file-upload-text">点击或拖拽上传银行证明</div>
+                        <div class="file-upload-hint">银行月结单或开户证明，显示账户名称和账号</div>
+                    </div>
+                    <input type="file" id="file10" style="display: none;" accept=".pdf,.jpg,.jpeg,.png">
+                </div>
+            </div>
+
+            <!-- Section 6: 声明与提交 -->
+            <div class="form-section">
+                <h2 class="section-title">✅ 声明与提交</h2>
+                <p class="section-subtitle">请确认以下信息真实准确</p>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" required>
+                        <span class="checkbox-label">本人确认所提供的所有资料真实、准确、完整，如有虚假，愿承担相应法律责任。</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" required>
+                        <span class="checkbox-label">本人已阅读并同意《EasyLink 支付服务协议》及《隐私政策》。</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" required>
+                        <span class="checkbox-label">本人授权 EasyLink 向相关金融机构及监管机构提供所需资料以完成审核。</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox">
+                        <span class="checkbox-label">本人同意接收 EasyLink 的服务通知及推广信息（可选）。</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button type="button" class="btn btn-secondary" onclick="saveDraft()">💾 保存草稿</button>
+                <div style="display: flex; gap: 12px;">
+                    <button type="button" class="btn btn-secondary" onclick="previewApplication()">👁️ 预览</button>
+                    <button type="submit" class="btn btn-primary">提交申请 →</button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script src="api-client.js"></script>
+    <script>
+        // 检查登录
+        if (!api.isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        // 文件上传处理
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    console.log('Selected files:', files);
+                    alert(`已选择 ${files.length} 个文件（演示：实际上传功能待开发）`);
+                }
+            });
+        });
+
+        // 表单提交
+        document.getElementById('applicationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // 验证所有必填项
+            const requiredFields = document.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value) {
+                    isValid = false;
+                    field.style.borderColor = 'var(--danger)';
+                } else {
+                    field.style.borderColor = '';
+                }
+            });
+            
+            if (!isValid) {
+                alert('请填写所有必填项');
+                return;
+            }
+            
+            // 收集表单数据
+            const formData = {
+                merchantName: document.querySelector('input[placeholder="请输入公司全称"]').value,
+                merchantShortName: document.querySelector('input[placeholder="用于显示的品牌名称"]').value,
+                merchantType: document.querySelector('select:nth-of-type(1)').value,
+                industryType: document.querySelector('select:nth-of-type(2)').value,
+                brNumber: document.querySelector('input[placeholder="例如: 12345678"]').value,
+                crNumber: document.querySelector('input[placeholder="例如: 1234567"]').value,
+                registeredAddress: document.querySelectorAll('textarea')[0].value,
+                operatingAddress: document.querySelectorAll('textarea')[1].value,
+                directorName: document.querySelectorAll('input[placeholder="请输入姓名"]')[0].value,
+                directorPosition: document.querySelectorAll('input[placeholder="例如: 董事/总经理"]')[0].value,
+                directorIdNumber: document.querySelectorAll('input[placeholder="请输入证件号码"]')[0].value,
+                directorPhone: document.querySelectorAll('input[placeholder="例如: 852 9123 4567"]')[0].value,
+                directorEmail: document.querySelectorAll('input[placeholder="例如: contact@company.com"]')[0].value,
+                directorShareholding: document.querySelectorAll('input[placeholder="例如: 100"]')[0].value,
+                contactName: document.querySelectorAll('input[placeholder="请输入姓名"]')[1].value,
+                contactPosition: document.querySelectorAll('input[placeholder="例如: 财务经理"]')[0].value,
+                contactPhone: document.querySelectorAll('input[placeholder="例如: 852 9123 4567"]')[1].value,
+                contactEmail: document.querySelectorAll('input[placeholder="例如: contact@company.com"]')[1].value,
+                websiteUrl: document.querySelector('input[placeholder="例如: https://www.company.com"]').value,
+                appName: document.querySelector('input[placeholder="如有移动端应用，请输入名称"]').value,
+                businessDescription: document.querySelector('textarea[placeholder*="业务模式"]').value,
+                estimatedMonthlyRevenue: document.querySelectorAll('select')[2].value,
+                averageTransactionAmount: document.querySelectorAll('input[type="number"]')[1].value,
+                settlementAccountName: document.querySelector('input[placeholder="必须与商业登记证上的公司名称一致"]').value,
+                bankName: document.querySelectorAll('select')[3].value,
+                bankAccountNumber: document.querySelectorAll('input[placeholder="请输入银行账号"]')[0].value,
+                bankBranchCode: document.querySelector('input[placeholder="例如: 012"]').value
+            };
+            
+            console.log('Submitting application:', formData);
+            
+            // 调用 API 提交
+            const result = await api.createApplication(formData);
+            
+            if (result.success) {
+                alert(`申请已提交！\n\n申请编号: ${result.data.applicationNo}\n状态: 草稿\n\n您可以稍后继续完善资料。`);
+                window.location.href = 'index.html';
+            } else {
+                // 演示模式：模拟成功
+                const mockAppNo = `APP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`;
+                alert(`申请已保存！（演示模式）\n\n申请编号: ${mockAppNo}\n状态: 草稿\n\n您可以稍后继续完善资料。`);
+                window.location.href = 'index.html';
+            }
+        });
+
+        function saveDraft() {
+            alert('草稿已保存！（演示模式）\n\n您可以稍后继续填写。');
+        }
+
+        function previewApplication() {
+            alert('预览功能开发中...');
+        }
+    </script>
+</body>
+</html>
