@@ -1,0 +1,42 @@
+name: Deploy Agent Portal to Production
+
+on:
+  push:
+    branches: [master, production, main]
+    paths:
+      - 'agent-portal/**'
+      - '.github/workflows/deploy-agent-portal.yml'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  deploy-production:
+    runs-on: ubuntu-latest
+    name: 🚀 Deploy Agent Portal to Production
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Install Wrangler
+        run: npm install -g wrangler
+      
+      - name: Deploy to Cloudflare Pages (Production)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: agent-portal
+          command: pages deploy . --project-name=easylink-agent-portal --branch=production
+      
+      - name: Deployment Summary
+        run: |
+          echo "✅ Production Deployment Completed!"
+          echo "🔗 Production URL: https://easylink-agent-portal.pages.dev"
+          echo "🔗 Platform Overview: https://easylink-agent-portal.pages.dev/platform-overview.html"
