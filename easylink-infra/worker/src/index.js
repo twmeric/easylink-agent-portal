@@ -53,7 +53,12 @@ export default {
         return await handleAuthAPI(request, env, path, method, origin, isAllowed);
       }
 
-      // 5. 健康检查
+      // 5. CloudWAPI 测试发送
+      if (path === '/test/whatsapp' && method === 'POST') {
+        return await handleTestWhatsApp(request, env, origin, isAllowed);
+      }
+
+      // 6. 健康检查
       if (path === '/health' && method === 'GET') {
         return jsonResponse({ 
           status: 'ok', 
@@ -610,7 +615,7 @@ async function queryPayment(orderNo, env, origin, isAllowed) {
 
 // CloudWAPI Configuration
 const CLOUDWAPI_KEY = 'fLt40WBzPE2DIK5Ls8AIPAMnt8pV8D';
-const CLOUDWAPI_SENDER = '85262322466';  // 提供的Sender号码
+const CLOUDWAPI_SENDER = '85268810677';  // 提供的Sender号码
 const CLOUDWAPI_URL = 'https://unofficial.cloudwapi.in/send-message';
 
 async function sendBossReport(env, config) {
@@ -747,6 +752,39 @@ async function sendWhatsAppMessage(phone, message) {
   
   console.log('[WhatsApp] Sent:', result);
   return result;
+}
+
+// 测试 WhatsApp 发送
+async function handleTestWhatsApp(request, env, origin, isAllowed) {
+  try {
+    const body = await request.json();
+    const { phone, message } = body;
+    
+    if (!phone) {
+      return jsonResponse({ error: 'Phone number is required' }, 400, origin, isAllowed);
+    }
+    
+    const testMessage = message || '這是一條來自 King-Chicken 支付系統的測試消息。\n\n如果您收到此消息，說明 CloudWAPI 配置正確！🎉';
+    
+    console.log(`[TestWhatsApp] Sending to ${phone} from ${CLOUDWAPI_SENDER}`);
+    
+    const result = await sendWhatsAppMessage(phone, testMessage);
+    
+    return jsonResponse({ 
+      success: true, 
+      message: 'Test message sent successfully',
+      to: phone,
+      from: CLOUDWAPI_SENDER,
+      result 
+    }, 200, origin, isAllowed);
+    
+  } catch (error) {
+    console.error('[TestWhatsApp] Error:', error);
+    return jsonResponse({ 
+      error: 'Failed to send test message',
+      details: error.message 
+    }, 500, origin, isAllowed);
+  }
 }
 
 // 获取支付方式名称

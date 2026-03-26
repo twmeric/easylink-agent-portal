@@ -1,0 +1,2 @@
+# 根路径重定向到 platform-overview
+/ /platform-overview.html 301

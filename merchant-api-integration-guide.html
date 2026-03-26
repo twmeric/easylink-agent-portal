@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyLink 支付平台 - 商戶 API 對接指南</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #FF6B00;
+            --primary-dark: #E55A00;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --code-bg: #f1f5f9;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+        }
+        
+        header h1 {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+        
+        header p {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge.get { background: var(--success); color: white; }
+        .badge.post { background: var(--info); color: white; }
+        .badge.required { background: var(--danger); color: white; }
+        .badge.optional { background: var(--text-light); color: white; }
+        
+        .section {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        
+        .section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .section h3 {
+            font-size: 20px;
+            margin: 30px 0 15px;
+            color: var(--text);
+        }
+        
+        .endpoint {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .endpoint-url {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 16px;
+            color: var(--text);
+        }
+        
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+        }
+        
+        .code-block .comment { color: #64748b; }
+        .code-block .string { color: #86efac; }
+        .code-block .number { color: #fbbf24; }
+        .code-block .key { color: #93c5fd; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th {
+            background: var(--code-bg);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:hover td {
+            background: var(--code-bg);
+        }
+        
+        .quick-start {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .step-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .step-card .number {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 15px;
+        }
+        
+        .step-card h4 {
+            margin-bottom: 10px;
+        }
+        
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .alert.info {
+            background: #dbeafe;
+            border-left: 4px solid var(--info);
+        }
+        
+        .alert.warning {
+            background: #fef3c7;
+            border-left: 4px solid var(--warning);
+        }
+        
+        .alert.success {
+            background: #d1fae5;
+            border-left: 4px solid var(--success);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+        }
+        
+        @media (max-width: 768px) {
+            .quick-start {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📡 商戶 API 對接指南</h1>
+            <p>通過 REST API 將支付功能整合到您的系統中</p>
+        </header>
+
+        <!-- 快速開始 -->
+        <section class="section">
+            <h2>🚀 快速開始</h2>
+            
+            <div class="quick-start">
+                <div class="step-card">
+                    <div class="number">1</div>
+                    <h4>申請商戶賬號</h4>
+                    <p>聯繫我們開通商戶賬號，獲取 merchantCode 和 API 密鑰</p>
+                </div>
+                <div class="step-card">
+                    <div class="number">2</div>
+                    <h4>閱讀 API 文檔</h4>
+                    <p>了解接口規範和簽名算法</p>
+                </div>
+                <div class="step-card">
+                    <div class="number">3</div>
+                    <h4>集成測試</h4>
+                    <p>使用測試環境進行對接，確認無誤後上線</p>
+                </div>
+            </div>
+
+            <div class="alert info">
+                <strong>API 基礎地址：</strong><br>
+                生產環境：<code>https://easylink-api-v2.your-domain.workers.dev/api/v1/{merchantCode}</code><br>
+                測試環境：<code>https://easylink-api-v2-staging.your-domain.workers.dev/api/v1/{merchantCode}</code>
+            </div>
+        </section>
+
+        <!-- 認證 -->
+        <section class="section">
+            <h2>🔐 認證方式</h2>
+            
+            <p>所有 API 請求需要在 Header 中攜帶認證信息：</p>
+            
+            <div class="code-block">
+{
+  "Authorization": "Bearer {your_api_key}",
+  "Content-Type": "application/json"
+}
+            </div>
+
+            <div class="alert warning">
+                <strong>重要：</strong>請妥善保管您的 API 密鑰，不要在客戶端代碼中暴露。
+            </div>
+        </section>
+
+        <!-- 核心 API -->
+        <section class="section">
+            <h2>💳 核心支付 API</h2>
+
+            <!-- 創建支付 -->
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/payment/create</span>
+                </div>
+                <p>創建支付訂單，返回支付跳轉鏈接</p>
+
+                <h4>請求參數</h4>
+                <table>
+                    <tr>
+                        <th>參數</th>
+                        <th>類型</th>
+                        <th>必填</th>
+                        <th>說明</th>
+                    </tr>
+                    <tr>
+                        <td>amount</td>
+                        <td>number</td>
+                        <td><span class="badge required">必填</span></td>
+                        <td>支付金額（港元），如 100.50</td>
+                    </tr>
+                    <tr>
+                        <td>payType</td>
+                        <td>string</td>
+                        <td><span class="badge required">必填</span></td>
+                        <td>支付方式：UP_OP（銀聯）、ALI_H5（支付寶）、WX_H5（微信）</td>
+                    </tr>
+                    <tr>
+                        <td>orderNo</td>
+                        <td>string</td>
+                        <td><span class="badge optional">選填</span></td>
+                        <td>商戶訂單號，如不傳則系統自動生成</td>
+                    </tr>
+                    <tr>
+                        <td>description</td>
+                        <td>string</td>
+                        <td><span class="badge optional">選填</span></td>
+                        <td>訂單描述，會顯示在支付頁面</td>
+                    </tr>
+                    <tr>
+                        <td>notifyUrl</td>
+                        <td>string</td>
+                        <td><span class="badge optional">選填</span></td>
+                        <td>支付結果異步通知地址</td>
+                    </tr>
+                    <tr>
+                        <td>returnUrl</td>
+                        <td>string</td>
+                        <td><span class="badge optional">選填</span></td>
+                        <td>支付完成後跳轉地址</td>
+                    </tr>
+                </table>
+
+                <h4>請求示例</h4>
+                <div class="code-block">
+<span class="comment">// 創建 $100 的銀聯支付訂單</span>
+curl -X POST <span class="string">'https://api.example.com/api/v1/KC/payment/create'</span> \\
+  -H <span class="string">'Authorization: Bearer pk_live_xxx'</span> \\
+  -H <span class="string">'Content-Type: application/json'</span> \\
+  -d <span class="string">'{
+    "amount": 100.00,
+    "payType": "UP_OP",
+    "orderNo": "ORDER_202403250001",
+    "description": "商品購買",
+    "notifyUrl": "https://your-site.com/webhook",
+    "returnUrl": "https://your-site.com/payment/success"
+  }'</span>
+                </div>
+
+                <h4>響應示例（成功）</h4>
+                <div class="code-block">
+{
+  <span class="key">"success"</span>: <span class="string">true</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"orderNo"</span>: <span class="string">"KC20240325120000ABC123"</span>,
+    <span class="key">"payOrderId"</span>: <span class="string">"P202403251200001234567"</span>,
+    <span class="key">"payUrl"</span>: <span class="string">"https://cashier.95516.com/..."</span>,
+    <span class="key">"amount"</span>: <span class="number">100.00</span>,
+    <span class="key">"currency"</span>: <span class="string">"HKD"</span>,
+    <span class="key">"status"</span>: <span class="string">"pending"</span>,
+    <span class="key">"createdAt"</span>: <span class="string">"2024-03-25T12:00:00+08:00"</span>
+  }
+}
+                </div>
+            </div>
+
+            <!-- 查詢訂單 -->
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="badge get">GET</span>
+                    <span class="endpoint-url">/payment/query?orderNo={orderNo}</span>
+                </div>
+                <p>查詢訂單狀態和詳情</p>
+
+                <h4>請求示例</h4>
+                <div class="code-block">
+curl -X GET <span class="string">'https://api.example.com/api/v1/KC/payment/query?orderNo=KC20240325120000ABC123'</span> \\
+  -H <span class="string">'Authorization: Bearer pk_live_xxx'</span>
+                </div>
+
+                <h4>響應示例</h4>
+                <div class="code-block">
+{
+  <span class="key">"success"</span>: <span class="string">true</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"orderNo"</span>: <span class="string">"KC20240325120000ABC123"</span>,
+    <span class="key">"payOrderId"</span>: <span class="string">"P202403251200001234567"</span>,
+    <span class="key">"amount"</span>: <span class="number">100.00</span>,
+    <span class="key">"status"</span>: <span class="string">"success"</span>,
+    <span class="key">"payType"</span>: <span class="string">"UP_OP"</span>,
+    <span class="key">"paidAt"</span>: <span class="string">"2024-03-25T12:05:30+08:00"</span>,
+    <span class="key">"channelOrderNo"</span>: <span class="string">"202403251200001234567890"</span>
+  }
+}
+                </div>
+            </div>
+        </section>
+
+        <!-- 退款 API -->
+        <section class="section">
+            <h2>💸 退款 API</h2>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/refund/create</span>
+                </div>
+                <p>對已支付訂單發起退款（支持部分退款）</p>
+
+                <h4>請求參數</h4>
+                <table>
+                    <tr>
+                        <th>參數</th>
+                        <th>類型</th>
+                        <th>必填</th>
+                        <th>說明</th>
+                    </tr>
+                    <tr>
+                        <td>orderNo</td>
+                        <td>string</td>
+                        <td><span class="badge required">必填</span></td>
+                        <td>原支付訂單號</td>
+                    </tr>
+                    <tr>
+                        <td>refundAmount</td>
+                        <td>number</td>
+                        <td><span class="badge required">必填</span></td>
+                        <td>退款金額（不能超過原訂單金額）</td>
+                    </tr>
+                    <tr>
+                        <td>refundNo</td>
+                        <td>string</td>
+                        <td><span class="badge optional">選填</span></td>
+                        <td>商戶退款單號，系統會自動生成</td>
+                    </tr>
+                    <tr>
+                        <td>reason</td>
+                        <td>string</td>
+                        <td><span class="badge optional">選填</span></td>
+                        <td>退款原因</td>
+                    </tr>
+                    <tr>
+                        <td>notifyUrl</td>
+                        <td>string</td>
+                        <td><span class="badge optional">選填</span></td>
+                        <td>退款結果通知地址</td>
+                    </tr>
+                </table>
+
+                <h4>請求示例</h4>
+                <div class="code-block">
+curl -X POST <span class="string">'https://api.example.com/api/v1/KC/refund/create'</span> \\
+  -H <span class="string">'Authorization: Bearer pk_live_xxx'</span> \\
+  -H <span class="string">'Content-Type: application/json'</span> \\
+  -d <span class="string">'{
+    "orderNo": "KC20240325120000ABC123",
+    "refundAmount": 50.00,
+    "reason": "客戶要求部分退款",
+    "notifyUrl": "https://your-site.com/refund/webhook"
+  }'</span>
+                </div>
+
+                <h4>響應示例</h4>
+                <div class="code-block">
+{
+  <span class="key">"success"</span>: <span class="string">true</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"refundNo"</span>: <span class="string">"R20240325130000XYZ789"</span>,
+    <span class="key">"orderNo"</span>: <span class="string">"KC20240325120000ABC123"</span>,
+    <span class="key">"refundAmount"</span>: <span class="number">50.00</span>,
+    <span class="key">"status"</span>: <span class="string">"processing"</span>,
+    <span class="key">"createdAt"</span>: <span class="string">"2024-03-25T13:00:00+08:00"</span>
+  }
+}
+                </div>
+
+                <div class="alert warning">
+                    <strong>注意：</strong>同一訂單可以多次退款，但累計退款金額不能超過原訂單金額。
+                </div>
+            </div>
+        </section>
+
+        <!-- 預授權 API -->
+        <section class="section">
+            <h2>🔒 預授權 API（進階功能）</h2>
+            
+            <p>預授權適用於酒店、租賃等需要先凍結資金後結算的場景。</p>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/preauth/create</span>
+                </div>
+                <p>創建預授權訂單，凍結客戶資金</p>
+
+                <h4>請求參數</h4>
+                <table>
+                    <tr>
+                        <th>參數</th>
+                        <th>類型</th>
+                        <th>必填</th>
+                        <th>說明</th>
+                    </tr>
+                    <tr>
+                        <td>amount</td>
+                        <td>number</td>
+                        <td><span class="badge required">必填</span></td>
+                        <td>預授權金額（凍結金額）</td>
+                    </tr>
+                    <tr>
+                        <td>payType</td>
+                        <td>string</td>
+                        <td><span class="badge required">必填</span></td>
+                        <td>支付方式</td>
+                    </tr>
+                    <tr>
+                        <td>description</td>
+                        <td>string</td>
+                        <td><span class="badge required">必填</span></td>
+                        <td>預授權說明（如「酒店押金」）</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/preauth/complete</span>
+                </div>
+                <p>完成預授權，實際扣款（可少於凍結金額）</p>
+
+                <h4>請求示例</h4>
+                <div class="code-block">
+curl -X POST <span class="string">'https://api.example.com/api/v1/KC/preauth/complete'</span> \\
+  -H <span class="string">'Authorization: Bearer pk_live_xxx'</span> \\
+  -d <span class="string">'{
+    "orderNo": "KC20240325120000ABC123",
+    "amount": 80.00,
+    "description": "實際結算金額"
+  }'</span>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="badge post">POST</span>
+                    <span class="endpoint-url">/preauth/cancel</span>
+                </div>
+                <p>撤銷預授權，解凍資金</p>
+            </div>
+        </section>
+
+        <!-- Webhook -->
+        <section class="section">
+            <h2>📬 Webhook 通知</h2>
+            
+            <p>當訂單狀態變更時，我們會向您配置的 <code>notifyUrl</code> 發送異步通知。</p>
+
+            <div class="alert info">
+                <strong>通知頻率：</strong>0s / 30s / 60s / 90s / 120s / 150s（最多 6 次）<br>
+                <strong>響應要求：</strong>您的服務器需要返回字符串 "success"（小寫）
+            </div>
+
+            <h4>支付通知內容</h4>
+            <div class="code-block">
+{
+  <span class="key">"event"</span>: <span class="string">"payment.success"</span>,
+  <span class="key">"orderNo"</span>: <span class="string">"KC20240325120000ABC123"</span>,
+  <span class="key">"payOrderId"</span>: <span class="string">"P202403251200001234567"</span>,
+  <span class="key">"amount"</span>: <span class="number">100.00</span>,
+  <span class="key">"status"</span>: <span class="string">"success"</span>,
+  <span class="key">"payType"</span>: <span class="string">"UP_OP"</span>,
+  <span class="key">"paidAt"</span>: <span class="string">"2024-03-25T12:05:30+08:00"</span>,
+  <span class="key">"channelOrderNo"</span>: <span class="string">"202403251200001234567890"</span>,
+  <span class="key">"sign"</span>: <span class="string">"a1b2c3d4e5f6..."</span>
+}
+            </div>
+
+            <h4>退款通知內容</h4>
+            <div class="code-block">
+{
+  <span class="key">"event"</span>: <span class="string">"refund.success"</span>,
+  <span class="key">"refundNo"</span>: <span class="string">"R20240325130000XYZ789"</span>,
+  <span class="key">"orderNo"</span>: <span class="string">"KC20240325120000ABC123"</span>,
+  <span class="key">"refundAmount"</span>: <span class="number">50.00</span>,
+  <span class="key">"status"</span>: <span class="string">"success"</span>,
+  <span class="key">"refundedAt"</span>: <span class="string">"2024-03-25T13:05:30+08:00"</span>,
+  <span class="key">"sign"</span>: <span class="string">"f6e5d4c3b2a1..."</span>
+}
+            </div>
+        </section>
+
+        <!-- 錯誤碼 -->
+        <section class="section">
+            <h2>⚠️ 錯誤碼對照表</h2>
+            
+            <table>
+                <tr>
+                    <th>錯誤碼</th>
+                    <th>說明</th>
+                    <th>處理建議</th>
+                </tr>
+                <tr>
+                    <td>4001</td>
+                    <td>參數缺失</td>
+                    <td>檢查請求參數是否完整</td>
+                </tr>
+                <tr>
+                    <td>4002</td>
+                    <td>簽名錯誤</td>
+                    <td>檢查 API Key 和簽名算法</td>
+                </tr>
+                <tr>
+                    <td>4003</td>
+                    <td>訂單不存在</td>
+                    <td>檢查 orderNo 是否正確</td>
+                </tr>
+                <tr>
+                    <td>4004</td>
+                    <td>訂單已支付</td>
+                    <td>該訂單已完成支付，不能重複支付</td>
+                </tr>
+                <tr>
+                    <td>4005</td>
+                    <td>餘額不足</td>
+                    <td>商戶賬戶餘額不足，請充值</td>
+                </tr>
+                <tr>
+                    <td>4006</td>
+                    <td>退款超額</td>
+                    <td>退款金額超過可退款餘額</td>
+                </tr>
+                <tr>
+                    <td>5001</td>
+                    <td>服務器內部錯誤</td>
+                    <td>請聯繫技術支持</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- SDK 示例 -->
+        <section class="section">
+            <h2>💻 SDK 示例</h2>
+            
+            <div class="tabs">
+                <div class="tab active">JavaScript</div>
+                <div class="tab">Python</div>
+                <div class="tab">PHP</div>
+                <div class="tab">Java</div>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// JavaScript SDK 示例</span>
+
+<span class="key">class</span> EasyLinkClient {
+  <span class="key">constructor</span>(apiKey, merchantCode, baseUrl) {
+    <span class="key">this</span>.apiKey = apiKey;
+    <span class="key">this</span>.merchantCode = merchantCode;
+    <span class="key">this</span>.baseUrl = baseUrl;
+  }
+
+  <span class="key">async</span> createPayment(params) {
+    <span class="key">const</span> response = <span class="key">await</span> fetch(
+      <span class="string">`${this.baseUrl}/api/v1/${this.merchantCode}/payment/create`</span>,
+      {
+        method: <span class="string">'POST'</span>,
+        headers: {
+          <span class="string">'Authorization'</span>: <span class="string">`Bearer ${this.apiKey}`</span>,
+          <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>
+        },
+        body: JSON.stringify(params)
+      }
+    );
+    <span class="key">return</span> response.json();
+  }
+
+  <span class="key">async</span> queryOrder(orderNo) {
+    <span class="key">const</span> response = <span class="key">await</span> fetch(
+      <span class="string">`${this.baseUrl}/api/v1/${this.merchantCode}/payment/query?orderNo=${orderNo}`</span>,
+      {
+        headers: { <span class="string">'Authorization'</span>: <span class="string">`Bearer ${this.apiKey}`</span> }
+      }
+    );
+    <span class="key">return</span> response.json();
+  }
+}
+
+<span class="comment">// 使用示例</span>
+<span class="key">const</span> client = <span class="key">new</span> EasyLinkClient(
+  <span class="string">'pk_live_your_api_key'</span>,
+  <span class="string">'KC'</span>,
+  <span class="string">'https://api.example.com'</span>
+);
+
+<span class="key">const</span> result = <span class="key">await</span> client.createPayment({
+  amount: 100.00,
+  payType: <span class="string">'UP_OP'</span>,
+  description: <span class="string">'商品購買'</span>
+});
+
+<span class="key">if</span> (result.success) {
+  window.location.href = result.data.payUrl;
+}
+            </div>
+        </section>
+
+        <!-- 聯繫 -->
+        <section class="section">
+            <h2>📞 技術支持</h2>
+            
+            <div class="alert success">
+                <strong>集成過程中遇到問題？</strong><br>
+                請聯繫我們的技術支持團隊：<br>
+                📧 Email: support@easylink.com.hk<br>
+                📱 WhatsApp: +852 9811 3210<br>
+                🕐 服務時間：週一至週五 9:00-18:00
+            </div>
+        </section>
+
+        <footer>
+            <p><strong>EasyLink Payment Platform</strong></p>
+            <p style="margin-top: 8px;">讓支付更簡單 | API v2.0</p>
+        </footer>
+    </div>
+</body>
+</html>

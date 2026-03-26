@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><!-- CONFIG: name --> 支付</title>
+    <link rel="icon" type="image/png" href="favicon.ico">
+    
+    <style>
+        /* EasyLink Merchant Template - Payment Page */
+        /* This template uses CSS variables from config.js */
+        
+        :root {
+            /* These will be overridden by JavaScript from config.js */
+            --primary: #FF6B00;
+            --primary-dark: #E55A00;
+            --cream: #FAF7F2;
+            --cream-dark: #F5F0E8;
+            --beige: #EDE8E0;
+            --text-dark: #2C2419;
+            --text-medium: #5C4F3D;
+            --text-light: #8B7D6B;
+            --gold: #C9A961;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--beige) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .payment-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px -15px rgba(44, 36, 25, 0.15);
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            border: 1px solid rgba(201, 169, 97, 0.2);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--cream-dark) 0%, var(--beige) 100%);
+            padding: 40px 32px;
+            text-align: center;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .logo img {
+            height: 90px;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-dark);
+            letter-spacing: 2px;
+            margin-top: 16px;
+        }
+
+        .content {
+            padding: 36px 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .amount-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .amount-btn {
+            padding: 18px 16px;
+            border: 2px solid var(--beige);
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .amount-btn:hover, .amount-btn.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .custom-amount {
+            display: flex;
+            align-items: center;
+            border: 2px solid var(--beige);
+            border-radius: 12px;
+            padding: 0 16px;
+            background: white;
+        }
+
+        .custom-amount input {
+            flex: 1;
+            border: none;
+            padding: 16px 0;
+            font-size: 16px;
+            outline: none;
+            background: transparent;
+        }
+
+        .pay-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .pay-method {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border: 2px solid var(--beige);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .pay-method.active {
+            border-color: var(--primary);
+        }
+
+        .pay-method .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-right: 16px;
+            color: white;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, var(--cream) 0%, var(--cream-dark) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border: 1px solid var(--beige);
+        }
+
+        .summary-value {
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px 32px;
+            background: linear-gradient(135deg, var(--cream-dark) 0%, var(--beige) 100%);
+            border-top: 1px solid var(--beige);
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* CONFIGURABLE: 可选员工选择区域 */
+        .staff-section {
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.05) 0%, rgba(255, 107, 0, 0.02) 100%);
+            border: 1px dashed var(--primary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .staff-section.hidden {
+            display: none;
+        }
+
+        .staff-select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--beige);
+            border-radius: 10px;
+            font-size: 15px;
+            background: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="header">
+            <div class="logo">
+                <img id="merchantLogo" src="logo.png" alt="Merchant Logo">
+            </div>
+            <div class="brand-name" id="merchantName">商户名称</div>
+        </div>
+        
+        <div class="content" id="paymentForm">
+            <!-- CONFIGURABLE: 员工选择区域 -->
+            <div class="staff-section hidden" id="staffSection">
+                <div style="font-size: 12px; color: var(--text-light); margin-bottom: 8px;">选择服务人员</div>
+                <select class="staff-select" id="staffSelect">
+                    <option value="">-- 请选择 --</option>
+                </select>
+            </div>
+            
+            <div class="section-title">选择金额</div>
+            <div class="amount-grid" id="amountGrid">
+                <!-- 动态生成 -->
+            </div>
+            <div class="custom-amount">
+                <span style="color: var(--primary); font-weight: 600; margin-right: 8px;">HK$</span>
+                <input type="number" id="customAmount" placeholder="输入自定义金额" min="1">
+            </div>
+            
+            <div class="section-title" style="margin-top: 28px;">选择支付方式</div>
+            <div class="pay-methods" id="payMethods">
+                <!-- 动态生成 -->
+            </div>
+            
+            <div class="summary">
+                <span style="font-size: 14px; color: var(--text-medium);">订单金额</span>
+                <span class="summary-value" id="totalAmount">HK$ 0.00</span>
+            </div>
+            
+            <button class="submit-btn" id="submitBtn">确认支付</button>
+        </div>
+        
+        <div class="footer">
+            <a href="./login.html">管理后台</a> · 安全支付保障
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // ============================================
+        // EasyLink Merchant Template - Payment Logic
+        // ============================================
+        
+        // Apply configuration from config.js
+        document.title = MERCHANT_CONFIG.name + ' 支付';
+        document.getElementById('merchantName').textContent = MERCHANT_CONFIG.name;
+        document.getElementById('merchantLogo').src = MERCHANT_CONFIG.logo;
+        document.getElementById('merchantLogo').alt = MERCHANT_CONFIG.name;
+        
+        // Apply theme colors
+        const root = document.documentElement;
+        root.style.setProperty('--primary', MERCHANT_CONFIG.theme.primary);
+        root.style.setProperty('--primary-dark', MERCHANT_CONFIG.theme.primaryDark);
+        root.style.setProperty('--cream', MERCHANT_CONFIG.theme.background);
+        root.style.setProperty('--cream-dark', MERCHANT_CONFIG.theme.backgroundDark);
+        root.style.setProperty('--beige', MERCHANT_CONFIG.theme.border);
+        root.style.setProperty('--text-dark', MERCHANT_CONFIG.theme.textDark);
+        root.style.setProperty('--text-medium', MERCHANT_CONFIG.theme.textMedium);
+        root.style.setProperty('--text-light', MERCHANT_CONFIG.theme.textLight);
+        root.style.setProperty('--gold', MERCHANT_CONFIG.theme.secondary);
+        
+        // Initialize payment page
+        const API_BASE = MERCHANT_CONFIG.api.baseUrl;
+        const merchantCode = MERCHANT_CONFIG.code;
+        
+        let selectedAmount = 0;
+        let selectedPayType = MERCHANT_CONFIG.payment.defaultPayType;
+        let selectedStaff = '';
+        
+        // CONFIGURABLE: 初始化员工选择 (如果启用)
+        function initStaffSelection() {
+            if (!MERCHANT_CONFIG.features.drivers) {
+                return;
+            }
+            
+            const staffSection = document.getElementById('staffSection');
+            const staffSelect = document.getElementById('staffSelect');
+            
+            // 检查 URL 参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const staffCode = urlParams.get('staff');
+            
+            if (staffCode && MERCHANT_CONFIG.features.driverData[staffCode]) {
+                // URL 自动选择
+                selectedStaff = staffCode;
+                staffSection.innerHTML = `
+                    <div style="font-size: 12px; color: var(--text-light); margin-bottom: 8px;">服务人员</div>
+                    <div style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px;">
+                        <span>👤</span>
+                        <span>${staffCode} - ${MERCHANT_CONFIG.features.driverData[staffCode].name}</span>
+                    </div>
+                `;
+            } else {
+                // 手动选择
+                staffSection.classList.remove('hidden');
+                Object.entries(MERCHANT_CONFIG.features.driverData).forEach(([code, info]) => {
+                    const option = document.createElement('option');
+                    option.value = code;
+                    option.textContent = `${code} - ${info.name}`;
+                    staffSelect.appendChild(option);
+                });
+                
+                staffSelect.addEventListener('change', (e) => {
+                    selectedStaff = e.target.value;
+                });
+            }
+        }
+        
+        // 初始化金额选择
+        function initAmountGrid() {
+            const grid = document.getElementById('amountGrid');
+            const amounts = MERCHANT_CONFIG.payment.presetAmounts;
+            
+            amounts.forEach(amount => {
+                const btn = document.createElement('button');
+                btn.className = 'amount-btn';
+                btn.dataset.amount = amount;
+                btn.textContent = `${MERCHANT_CONFIG.payment.currencySymbol} ${amount.toLocaleString()}`;
+                btn.addEventListener('click', () => selectAmount(amount, btn));
+                grid.appendChild(btn);
+            });
+        }
+        
+        // 初始化支付方式
+        function initPayMethods() {
+            const container = document.getElementById('payMethods');
+            const methods = MERCHANT_CONFIG.payment.enabledPayTypes;
+            
+            methods.forEach((method, index) => {
+                const div = document.createElement('div');
+                div.className = 'pay-method' + (index === 0 ? ' active' : '');
+                div.dataset.type = method.code;
+                div.innerHTML = `
+                    <div class="icon" style="background: linear-gradient(135deg, ${method.color} 0%, ${method.color}dd 100%);">${method.icon}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: var(--text-dark);">${method.name}</div>
+                        <div style="font-size: 12px; color: var(--text-light);">${method.code}</div>
+                    </div>
+                    <div class="radio" style="width: 22px; height: 22px; border: 2px solid var(--beige); border-radius: 50%;"></div>
+                `;
+                div.addEventListener('click', () => selectPayMethod(method.code, div));
+                container.appendChild(div);
+            });
+        }
+        
+        function selectAmount(amount, btn) {
+            document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('customAmount').value = '';
+            selectedAmount = amount;
+            updateTotal();
+        }
+        
+        function selectPayMethod(type, el) {
+            document.querySelectorAll('.pay-method').forEach(m => {
+                m.classList.remove('active');
+                m.querySelector('.radio').style.borderColor = 'var(--beige)';
+                m.querySelector('.radio').style.background = 'transparent';
+            });
+            el.classList.add('active');
+            el.querySelector('.radio').style.borderColor = 'var(--primary)';
+            el.querySelector('.radio').style.background = 'var(--primary)';
+            selectedPayType = type;
+        }
+        
+        function updateTotal() {
+            document.getElementById('totalAmount').textContent = 
+                `${MERCHANT_CONFIG.payment.currencySymbol} ${selectedAmount.toLocaleString('en-HK', {minimumFractionDigits: 2})}`;
+            document.getElementById('submitBtn').disabled = selectedAmount <= 0;
+        }
+        
+        // 提交支付
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            if (selectedAmount <= 0) {
+                alert('请选择或输入金额');
+                return;
+            }
+            
+            if (MERCHANT_CONFIG.features.drivers && !selectedStaff) {
+                alert('请选择服务人员');
+                return;
+            }
+            
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = '处理中...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/${merchantCode}/payment/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: selectedAmount,
+                        payType: selectedPayType,
+                        subject: `${MERCHANT_CONFIG.shortName} Payment`,
+                        driverCode: selectedStaff
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.data?.payUrl) {
+                    window.location.href = result.data.payUrl;
+                } else {
+                    throw new Error(result.error || '创建支付订单失败');
+                }
+            } catch (error) {
+                alert(error.message || '网络错误，请重试');
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitBtn').textContent = '确认支付';
+            }
+        });
+        
+        // 自定义金额输入
+        document.getElementById('customAmount').addEventListener('input', (e) => {
+            document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+            selectedAmount = parseFloat(e.target.value) || 0;
+            updateTotal();
+        });
+        
+        // 初始化
+        initStaffSelection();
+        initAmountGrid();
+        initPayMethods();
+        updateTotal();
+    </script>
+</body>
+</html>
