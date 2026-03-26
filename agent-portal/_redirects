@@ -1,2 +1,6 @@
 # 根路径重定向到 platform-overview
 / /platform-overview.html 301
+
+# Custom Domain 路由规则
+# upay-agent.jkdcoding.com/* -> 显示 login.html
+# upay-newapp.jkdcoding.com/* -> 显示 new-application.html
